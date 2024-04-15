@@ -11,9 +11,13 @@
 	<groupId>ru.diplom</groupId>
 	<artifactId>itfs</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>itfs</name>
+    <packaging>pom</packaging>
+    <name>itfs</name>
 	<description>Demo project for Spring Boot</description>
-	<properties>
+    <modules>
+        <module>backend</module>
+    </modules>
+    <properties>
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
