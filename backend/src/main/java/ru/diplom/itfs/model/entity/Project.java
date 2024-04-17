@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -60,6 +61,9 @@ public class Project {
             inverseJoinColumns = @JoinColumn(name = "employee_id")
     )
     private Set<Employee> team;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    private Employee author;
 
     public void addSkill(Skill skill) {
         if (requiredSkills == null) {

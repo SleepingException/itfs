@@ -18,9 +18,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.userdetails.UserDetails;
+import ru.diplom.itfs.model.enums.UserRoleEnum;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -84,5 +88,11 @@ public class User implements UserDetails {
             authorities = new HashSet<>();
         }
         authorities.add(authority);
+    }
+
+    public boolean hasRole(UserRoleEnum role) {
+        return authorities.stream()
+                .map(BasicAuthority::getRole)
+                .anyMatch(userRole -> Objects.equals(userRole, role.name()));
     }
 }

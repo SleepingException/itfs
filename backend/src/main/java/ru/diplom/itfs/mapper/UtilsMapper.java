@@ -5,6 +5,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import ru.diplom.itfs.model.entity.BasicAuthority;
 import ru.diplom.itfs.model.entity.Employee;
+import ru.diplom.itfs.model.entity.SkillLevel;
+import ru.diplom.itfs.model.enums.SkillLevelEnum;
 import ru.diplom.itfs.model.enums.UserRoleEnum;
 
 import java.util.Objects;
@@ -29,5 +31,13 @@ public interface UtilsMapper {
     default BasicAuthority userRoleToAuthority(UserRoleEnum userRoleEnum) {
         if (userRoleEnum == null) return null;
         return new BasicAuthority().setRole(userRoleEnum.name());
+    }
+
+    default Integer getSkillLevelAsNum(SkillLevelEnum skillLevel) {
+        return skillLevel.ordinal();
+    }
+
+    default String getSkillLevelAsStr(SkillLevelEnum skillLevel) {
+        return skillLevel.name();
     }
 }

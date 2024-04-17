@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import ru.diplom.itfs.model.enums.SkillLevelEnum;
 
 @Entity
@@ -17,6 +18,7 @@ import ru.diplom.itfs.model.enums.SkillLevelEnum;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Accessors(chain = true)
 public class SkillLevel {
 
     @Id
@@ -28,6 +30,9 @@ public class SkillLevel {
     @Column(name = "level", nullable = false)
     private SkillLevelEnum level;
 
-    @Column(name = "description")
+    @Column(name = "level_name", length = 2000)
+    private String levelName;
+
+    @Column(name = "description", length = 2000)
     private String description;
 }

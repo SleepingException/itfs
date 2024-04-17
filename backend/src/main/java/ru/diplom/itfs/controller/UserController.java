@@ -2,6 +2,7 @@ package ru.diplom.itfs.controller;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import ru.diplom.itfs.model.entity.User;
 import ru.diplom.itfs.service.employee.EmployeeService;
 import ru.diplom.itfs.service.user.UserService;
 
+@Tag(name = "API Пользователей")
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
