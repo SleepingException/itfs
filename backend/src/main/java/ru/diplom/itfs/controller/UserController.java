@@ -6,12 +6,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.diplom.itfs.dto.employee.EmployeeDto;
 import ru.diplom.itfs.dto.user.UserCreateDto;
+import ru.diplom.itfs.dto.user.UserDto;
 import ru.diplom.itfs.model.entity.User;
 import ru.diplom.itfs.service.employee.EmployeeService;
 import ru.diplom.itfs.service.user.UserService;
@@ -30,6 +32,12 @@ public class UserController {
     @Operation(description = "Регистрация пользователя")
     public void register(@RequestBody UserCreateDto createDto) {
         userService.create(createDto);
+    }
+
+    @GetMapping("/current")
+    @Operation(description = "Регистрация пользователя")
+    public UserDto currentUser(@AuthenticationPrincipal User user) {
+        return userService.toDto(user);
     }
 
     @Hidden

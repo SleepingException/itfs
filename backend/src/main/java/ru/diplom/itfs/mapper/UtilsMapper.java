@@ -18,6 +18,10 @@ public interface UtilsMapper {
 
     @Named("mapFullName")
     default String mapFullName(Employee employee) {
+        if (employee == null) {
+            return null;
+        }
+
         return Stream.of(employee.getFirstName(), employee.getSecondName(), employee.getLastName())
                 .filter(Objects::nonNull)
                 .collect(Collectors.joining(StringUtils.SPACE));
