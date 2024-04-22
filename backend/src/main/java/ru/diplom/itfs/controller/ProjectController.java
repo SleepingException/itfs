@@ -2,6 +2,7 @@ package ru.diplom.itfs.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,7 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
     @PostMapping("/create")
     public ProjectDto create(@AuthenticationPrincipal User user, ProjectCreateDto createDto) {
         return projectService.create(user, createDto);
