@@ -9,17 +9,16 @@ services:
       - "6543:5432"
 
   frontend:
-    build:
-      context: ./frontend
-      target: runner
-    volumes:
-      - /app/node_modules
-      - ./frontend:/app
-    command: npm run dev
-    ports:
-      - "3000:3000"
-    environment:
-      NODE_ENV: development
+      container_name: nextapp
+      image: francescoxx/nextapp:1.0.0
+      build:
+        context: ./frontend
+        dockerfile: ./Dockerfile
+      ports:
+        - 3000:3000
+      depends_on:
+        - backend
+      restart: always
 
   backend:
     depends_on:

@@ -26,7 +26,7 @@ const Page = () => {
     const formData = getFormData(formState);
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/login`,
+      `/app/login`,
       {
         method: 'POST',
         // mode: 'no-cors',
@@ -37,10 +37,10 @@ const Page = () => {
     // console.log('response', response);
     if (response.ok) {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/users`,
+        `/app/users/current`,
         {
           method: 'GET',
-          mode: 'no-cors',
+          // mode: 'no-cors',
           credentials: 'include',
           // body: formData,
         }

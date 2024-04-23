@@ -1,36 +1,27 @@
-FROM node:18-alpine AS deps
-RUN apk add --no-cache libc6-compat
+# Dockerfile
+
+# Use node alpine as it's a small node image
+FROM node:alpine
+
+# Create the directory on the node image
+# where our Next.js app will live
+RUN mkdir -p /app
+
+# Set /app as the working directory
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-RUN  npm install --production
+# Copy package.json and package-lock.json
+# to the /app working directory
+COPY package*.json /app
 
-FROM node:18-alpine AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+# Install dependencies in /app
+RUN yarn install
 
-ENV NEXT_TELEMETRY_DISABLED 1
+# Copy the rest of our Next.js folder into /app
+COPY . /app
 
-RUN npm run build
-
-FROM node:18-alpine AS runner
-WORKDIR /app
-
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
-
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-
-USER nextjs
-
+# Ensure port 3000 is accessible to our system
 EXPOSE 3000
 
-ENV PORT 3000
-
-CMD ["npm", "start"]
+# Run yarn dev, as we would via the command line
+CMD ["yarn", "dev"]

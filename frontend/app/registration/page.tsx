@@ -23,7 +23,7 @@ const Registration = () => {
     event.preventDefault();
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/register`,
+      `/users/register`,
       {
         method: 'POST',
         body: JSON.stringify(formState),
