@@ -83,4 +83,11 @@ public class Employee {
         }
         skills.add(skill);
     }
+
+    public void addProject(Project project) {
+        if (projects == null) {
+            projects = new HashSet<>();
+        }
+        projects.add(project);
+    }
 }

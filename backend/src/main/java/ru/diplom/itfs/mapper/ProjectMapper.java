@@ -16,7 +16,9 @@ public interface ProjectMapper {
 
     Project toEntity(ProjectCreateDto createDto);
 
-//    @Mapping(source = "dto.name", target = "project.name",
-//            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "dto.name", target = "project.name",
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "dto.description", target = "project.description",
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void update(ProjectUpdateDto dto, @MappingTarget Project project);
 }
