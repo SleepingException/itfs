@@ -48,7 +48,7 @@ public class ProjectController {
 
     @PatchMapping("/{id}/skills")
     public ProjectDto addSkill(@PathVariable Long id,
-                               @RequestParam(name = "skill_name") String skillName,
+                               @RequestParam(name = "skillName") String skillName,
                                @RequestParam(name = "level") SkillLevelEnum level) {
         return projectService.addSkill(id, skillName, level);
     }
