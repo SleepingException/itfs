@@ -2,8 +2,25 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useUser } from '@/utils/hooks/useUser';
+import { toast } from 'react-toastify';
 
 export const Header = () => {
+  const { user, refetch } = useUser();
+
+  async function onLogut(event: any) {
+    event.preventDefault();
+
+    const response = await fetch(`/app/logout`, {
+      method: 'GET',
+    });
+
+    if (response.ok) {
+      refetch();
+      return toast.success('Вы успешно вышли из аккаунта!');
+    }
+  }
+
   return (
     <header>
       <nav className='border-gray-200 bg-white px-4 py-2.5 dark:bg-gray-800 lg:px-6'>
@@ -21,18 +38,24 @@ export const Header = () => {
             </span>
           </Link>
           <div className='flex items-center lg:order-2'>
-            <Link
-              href={'/login'}
-              className='mr-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-800 lg:px-5 lg:py-2.5'
-            >
-              Войти
-            </Link>
-            <Link
-              href={'/registration'}
-              className='mr-2 rounded-lg bg-primary-700 px-4 py-2 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 lg:px-5 lg:py-2.5'
-            >
-              Зарегистрироваться
-            </Link>
+            {user ? (
+              <button onClick={onLogut}>Выйти</button>
+            ) : (
+              <>
+                <Link
+                  href={'/login'}
+                  className='mr-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-800 lg:px-5 lg:py-2.5'
+                >
+                  Войти
+                </Link>
+                <Link
+                  href={'/registration'}
+                  className='mr-2 rounded-lg bg-primary-700 px-4 py-2 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 lg:px-5 lg:py-2.5'
+                >
+                  Зарегистрироваться
+                </Link>
+              </>
+            )}
             <button
               data-collapse-toggle='mobile-menu-2'
               type='button'

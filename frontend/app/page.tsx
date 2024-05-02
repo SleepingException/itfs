@@ -1,11 +1,9 @@
 'use client';
 
-import { Header } from '@/components/Header';
 import { ToastContainer } from 'react-toastify';
-import { useUser } from '@/utils/hooks/useUser';
+import { Header } from '@/components/Header';
 
 export default function Home() {
-  // const user = useUser();
   return (
     <>
       <Header />

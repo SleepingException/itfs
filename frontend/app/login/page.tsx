@@ -29,23 +29,11 @@ const Page = () => {
       `/app/login`,
       {
         method: 'POST',
-        // mode: 'no-cors',
         body: formData,
       }
     );
 
-    // console.log('response', response);
-    if (response.ok) {
-      const res = await fetch(
-        `/app/users/current`,
-        {
-          method: 'GET',
-          // mode: 'no-cors',
-          credentials: 'include',
-          // body: formData,
-        }
-      );
-      console.log('res', res);
+    if (response.ok && response.status === 200) {
       return push('/');
     }
 

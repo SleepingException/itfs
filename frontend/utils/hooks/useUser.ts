@@ -1,11 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export const useUser = () => {
   const [user, setUser] = useState();
 
-  fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/current`, {
-    method: 'GET',
-    credentials: 'include',
-    mode: 'no-cors',
-  }).then((response) => console.log('response', response));
+  const getCurrentUser = () => {
+    try {
+      fetch(`app/users/current`, {
+        method: 'GET',
+        credentials: 'include',
+      })
+        .then((response) => {
+          if (response.status === 401) {
+            setUser(undefined);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setUser(data);
+        });
+    } catch (e) {
+      console.log(e);
+      setUser(undefined);
+    }
+  };
+
+  useEffect(() => {
+    getCurrentUser();
+  }, []);
+
+  return { user, refetch: getCurrentUser };
 };

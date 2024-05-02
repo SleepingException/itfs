@@ -23,7 +23,7 @@ const Registration = () => {
     event.preventDefault();
 
     const response = await fetch(
-      `/users/register`,
+      `app/users/register`,
       {
         method: 'POST',
         body: JSON.stringify(formState),
