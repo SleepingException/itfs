@@ -16,6 +16,7 @@ import ru.diplom.itfs.model.entity.Employee;
 import ru.diplom.itfs.model.entity.User;
 import ru.diplom.itfs.model.enums.UserRoleEnum;
 import ru.diplom.itfs.repository.AuthorityRepository;
+import ru.diplom.itfs.repository.EmployeeRepository;
 import ru.diplom.itfs.repository.UserRepository;
 
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.Set;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final EmployeeRepository employeeRepository;
     private final AuthorityRepository authorityRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
@@ -77,6 +79,7 @@ public class UserServiceImpl implements UserService {
         employee.setUser(user);
 
         userRepository.save(user);
+        employeeRepository.save(employee);
 
         return user;
     }
