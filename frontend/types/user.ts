@@ -1,7 +1,7 @@
 export interface IUser {
   id: number;
   fullName: string;
-  roles: E_ROLES;
+  roles: E_ROLES[];
   enabled: boolean;
 }
 

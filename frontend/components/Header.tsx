@@ -4,9 +4,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { useUser } from '@/utils/hooks/useUser';
+import { useRouter } from 'next/navigation';
 
 export const Header = () => {
-  const { user, refetch, isAdmin } = useUser();
+  const { user, refetch, isAdmin, isManager } = useUser();
+  const { replace } = useRouter();
 
   async function onLogut(event: any) {
     event.preventDefault();
@@ -17,7 +19,8 @@ export const Header = () => {
 
     if (response.ok) {
       refetch();
-      return toast.success('Вы успешно вышли из аккаунта!');
+      toast.success('Вы успешно вышли из аккаунта!');
+      return replace('/');
     }
   }
 
@@ -95,54 +98,71 @@ export const Header = () => {
             id='mobile-menu-2'
           >
             <ul className='mt-4 flex flex-col font-medium lg:mt-0 lg:flex-row lg:space-x-8'>
-              <li>
-                <a
-                  href='#'
-                  className='block rounded bg-primary-700 py-2 pl-3 pr-4 text-white dark:text-white lg:bg-transparent lg:p-0 lg:text-primary-700'
-                  aria-current='page'
-                >
-                  Home
-                </a>
-              </li>
-              <li>
-                <a
-                  href='#'
-                  className='block border-b border-gray-100 py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white lg:border-0 lg:p-0 lg:hover:bg-transparent lg:hover:text-primary-700 lg:dark:hover:bg-transparent lg:dark:hover:text-white'
-                >
-                  Company
-                </a>
-              </li>
-              <li>
-                <a
-                  href='#'
-                  className='block border-b border-gray-100 py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white lg:border-0 lg:p-0 lg:hover:bg-transparent lg:hover:text-primary-700 lg:dark:hover:bg-transparent lg:dark:hover:text-white'
-                >
-                  Marketplace
-                </a>
-              </li>
-              <li>
-                <a
-                  href='#'
-                  className='block border-b border-gray-100 py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white lg:border-0 lg:p-0 lg:hover:bg-transparent lg:hover:text-primary-700 lg:dark:hover:bg-transparent lg:dark:hover:text-white'
-                >
-                  Features
-                </a>
-              </li>
-              <li>
-                <a
-                  href='#'
-                  className='block border-b border-gray-100 py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white lg:border-0 lg:p-0 lg:hover:bg-transparent lg:hover:text-primary-700 lg:dark:hover:bg-transparent lg:dark:hover:text-white'
-                >
-                  Team
-                </a>
-              </li>
+              {user ? (
+                <>
+                  <li>
+                    <Link
+                      href='/'
+                      className='block rounded bg-primary-700 py-2 pl-3 pr-4 text-white dark:text-white lg:bg-transparent lg:p-0 lg:text-primary-700'
+                      aria-current='page'
+                    >
+                      Профиль сотрудника
+                    </Link>
+                  </li>
+                  {isAdmin ||
+                    (isManager && (
+                      <li>
+                        <Link
+                          href='/competencies'
+                          className='block border-b border-gray-100 py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white lg:border-0 lg:p-0 lg:hover:bg-transparent lg:hover:text-primary-700 lg:dark:hover:bg-transparent lg:dark:hover:text-white'
+                        >
+                          Компетенции
+                        </Link>
+                      </li>
+                    ))}
+                  {/*<li>*/}
+                  {/*  <a*/}
+                  {/*    href='#'*/}
+                  {/*    className='block border-b border-gray-100 py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white lg:border-0 lg:p-0 lg:hover:bg-transparent lg:hover:text-primary-700 lg:dark:hover:bg-transparent lg:dark:hover:text-white'*/}
+                  {/*  >*/}
+                  {/*    Marketplace*/}
+                  {/*  </a>*/}
+                  {/*</li>*/}
+                  {/*<li>*/}
+                  {/*  <a*/}
+                  {/*    href='#'*/}
+                  {/*    className='block border-b border-gray-100 py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white lg:border-0 lg:p-0 lg:hover:bg-transparent lg:hover:text-primary-700 lg:dark:hover:bg-transparent lg:dark:hover:text-white'*/}
+                  {/*  >*/}
+                  {/*    Features*/}
+                  {/*  </a>*/}
+                  {/*</li>*/}
+                  {/*<li>*/}
+                  {/*  <a*/}
+                  {/*    href='#'*/}
+                  {/*    className='block border-b border-gray-100 py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white lg:border-0 lg:p-0 lg:hover:bg-transparent lg:hover:text-primary-700 lg:dark:hover:bg-transparent lg:dark:hover:text-white'*/}
+                  {/*  >*/}
+                  {/*    Team*/}
+                  {/*  </a>*/}
+                  {/*</li>*/}
+                </>
+              ) : (
+                <li>
+                  <Link
+                    href='/'
+                    className='block rounded bg-primary-700 py-2 pl-3 pr-4 text-white dark:text-white lg:bg-transparent lg:p-0 lg:text-primary-700'
+                    aria-current='page'
+                  >
+                    Профиль сотрудника
+                  </Link>
+                </li>
+              )}
               {isAdmin && (
                 <li>
                   <Link
                     href='/admin'
                     className='block border-b border-gray-100 py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white lg:border-0 lg:p-0 lg:hover:bg-transparent lg:hover:text-primary-700 lg:dark:hover:bg-transparent lg:dark:hover:text-white'
                   >
-                    Админ манель
+                    Админ-панель
                   </Link>
                 </li>
               )}

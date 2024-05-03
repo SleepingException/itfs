@@ -25,8 +25,20 @@ export const useUser = () => {
           console.error('There was a problem with the fetch operation:', error);
         });
     } catch (e) {
-      console.log(e);
+      console.error(e);
       setUser(undefined);
+    }
+  };
+
+  const getCurrentEmployee = async () => {
+    try {
+      const { data: currentEmployee } = await axios.get(
+        'app/employees/current'
+      );
+      console.log('currentEmployee', currentEmployee);
+      return currentEmployee;
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -34,5 +46,12 @@ export const useUser = () => {
     getCurrentUser();
   }, []);
 
-  return { user, refetch: getCurrentUser, isManager, isAdmin, isEmployee };
+  return {
+    user,
+    refetch: getCurrentUser,
+    currentEmployee: getCurrentEmployee(),
+    isManager,
+    isAdmin,
+    isEmployee,
+  };
 };
