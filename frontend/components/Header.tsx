@@ -2,11 +2,11 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useUser } from '@/utils/hooks/useUser';
 import { toast } from 'react-toastify';
+import { useUser } from '@/utils/hooks/useUser';
 
 export const Header = () => {
-  const { user, refetch } = useUser();
+  const { user, refetch, isAdmin } = useUser();
 
   async function onLogut(event: any) {
     event.preventDefault();
@@ -136,14 +136,16 @@ export const Header = () => {
                   Team
                 </a>
               </li>
-              <li>
-                <a
-                  href='#'
-                  className='block border-b border-gray-100 py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white lg:border-0 lg:p-0 lg:hover:bg-transparent lg:hover:text-primary-700 lg:dark:hover:bg-transparent lg:dark:hover:text-white'
-                >
-                  Contact
-                </a>
-              </li>
+              {isAdmin && (
+                <li>
+                  <Link
+                    href='/admin'
+                    className='block border-b border-gray-100 py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white lg:border-0 lg:p-0 lg:hover:bg-transparent lg:hover:text-primary-700 lg:dark:hover:bg-transparent lg:dark:hover:text-white'
+                  >
+                    Админ манель
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
         </div>

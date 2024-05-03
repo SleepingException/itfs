@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
+import { E_ROLES, IUser } from '@/types/user';
 
 export const useUser = () => {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState<IUser | undefined>();
+  const isAdmin = user?.roles.includes(E_ROLES.ROLE_ADMIN);
+  const isEmployee = user?.roles.includes(E_ROLES.ROLE_EMPLOYEE);
+  const isManager = user?.roles.includes(E_ROLES.ROLE_MANAGER);
 
   const getCurrentUser = () => {
     try {
@@ -28,5 +32,5 @@ export const useUser = () => {
     getCurrentUser();
   }, []);
 
-  return { user, refetch: getCurrentUser };
+  return { user, refetch: getCurrentUser, isManager, isAdmin, isEmployee };
 };

@@ -25,14 +25,11 @@ const Page = () => {
 
     const formData = getFormData(formState);
 
-    const response = await fetch(
-      `/app/login`,
-      {
-        method: 'POST',
-        body: formData,
-      }
-    );
-
+    const response = await fetch(`/app/login`, {
+      method: 'POST',
+      body: formData,
+    });
+    console.log('response', response);
     if (response.ok && response.status === 200) {
       return push('/');
     }

@@ -22,14 +22,11 @@ const Registration = () => {
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const response = await fetch(
-      `app/users/register`,
-      {
-        method: 'POST',
-        body: JSON.stringify(formState),
-        headers: new Headers({ 'Content-Type': 'application/json' }),
-      }
-    );
+    const response = await fetch(`app/users/register`, {
+      method: 'POST',
+      body: JSON.stringify(formState),
+      headers: new Headers({ 'Content-Type': 'application/json' }),
+    });
 
     if (response.ok) {
       toast.success(

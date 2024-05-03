@@ -15,7 +15,6 @@ export default function Home() {
         </div>
         <input placeholder={'click'} />
       </main>
-      <ToastContainer />
     </>
   );
 }
