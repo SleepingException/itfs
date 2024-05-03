@@ -3,21 +3,25 @@ package ru.diplom.itfs.mapper;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.diplom.itfs.model.entity.BasicAuthority;
 import ru.diplom.itfs.model.entity.Employee;
-import ru.diplom.itfs.model.entity.SkillLevel;
 import ru.diplom.itfs.model.enums.SkillLevelEnum;
 import ru.diplom.itfs.model.enums.UserRoleEnum;
+import ru.diplom.itfs.repository.AuthorityRepository;
 
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Mapper(componentModel = "spring")
-public interface UtilsMapper {
+public abstract class UtilsMapper {
+
+    @Autowired
+    AuthorityRepository authorityRepository;
 
     @Named("mapFullName")
-    default String mapFullName(Employee employee) {
+    public String mapFullName(Employee employee) {
         if (employee == null) {
             return null;
         }
@@ -27,21 +31,21 @@ public interface UtilsMapper {
                 .collect(Collectors.joining(StringUtils.SPACE));
     }
 
-    default UserRoleEnum getAuthorityRole(BasicAuthority authority) {
+    public UserRoleEnum getAuthorityRole(BasicAuthority authority) {
         if (authority == null) return null;
         return UserRoleEnum.valueOf(authority.getRole());
     }
 
-    default BasicAuthority userRoleToAuthority(UserRoleEnum userRoleEnum) {
+    public BasicAuthority userRoleToAuthority(UserRoleEnum userRoleEnum) {
         if (userRoleEnum == null) return null;
-        return new BasicAuthority().setRole(userRoleEnum.name());
+        return authorityRepository.getByRole(userRoleEnum.name());
     }
 
-    default Integer getSkillLevelAsNum(SkillLevelEnum skillLevel) {
+    public Integer getSkillLevelAsNum(SkillLevelEnum skillLevel) {
         return skillLevel.ordinal();
     }
 
-    default String getSkillLevelAsStr(SkillLevelEnum skillLevel) {
+    public String getSkillLevelAsStr(SkillLevelEnum skillLevel) {
         return skillLevel.name();
     }
 }
