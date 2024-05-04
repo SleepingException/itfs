@@ -1,37 +1,41 @@
 'use client';
 
 import { Layout } from '@/components/Layout';
-import { E_SKILL_TYPE } from '@/types/skill';
-import { useState } from 'react';
+import { E_SKILL_TYPE, ISkill } from '@/types/skill';
+import { ChangeEvent, useEffect, useState } from 'react';
+import axios from 'axios';
 
 const CompetenciesPage = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [data, setData] = useState<ISkill[]>([]);
+  const [newSkill, setNewSkill] = useState<ISkill | {}>({});
 
-  const data = [
-    {
-      name: 'Ответственность',
-      description: 'Ответственность есть Ответственность',
-      type: 'SOFT',
-    },
-    {
-      name: 'Ответственность',
-      description: 'Ответственность есть Ответственность',
-      type: 'SOFT',
-    },
-    {
-      name: 'Javascript',
-      description: 'Владение ЯП Javascript',
-      type: 'HARD',
-    },
-    {
-      name: 'Javascript',
-      description: 'Владение ЯП Javascript',
-      type: 'HARD',
-    },
-  ];
+  const getData = () => {
+    return axios.get('app/skills').then(({ data }) => setData(data));
+  };
 
-  const softSkills = data.filter(({ type }) => type !== E_SKILL_TYPE.HARD);
-  const hardSkills = data.filter(({ type }) => type !== E_SKILL_TYPE.SOFT);
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const softSkills = data?.filter(({ type }) => type !== E_SKILL_TYPE.HARD);
+  const hardSkills = data?.filter(({ type }) => type !== E_SKILL_TYPE.SOFT);
+
+  const handleInput = (event: ChangeEvent<HTMLInputElement>) => {
+    const fieldName = event.target.name;
+    const fieldValue = event.target.value;
+
+    setNewSkill((prevState) => ({
+      ...prevState,
+      [fieldName]: fieldValue,
+    }));
+  };
+  const onAddNewSkill = (event: any) => {
+    event.preventDefault();
+    axios.post('app/skills/create', newSkill).then((skill) => {
+      getData().then(() => setIsOpen(false));
+    });
+  };
 
   return (
     <>
@@ -41,7 +45,7 @@ const CompetenciesPage = () => {
             <div className=' col-span-1 rounded bg-white px-4 py-4 shadow-md'>
               <h2 className='mb-4 text-xl font-semibold'>Soft-скиллы</h2>
               <ul className='grid grid-cols-1 divide-y'>
-                {softSkills.map((item, index) => (
+                {softSkills?.map((item, index) => (
                   <li key={index} className='mb-4 flex flex-col'>
                     <span className='mb-1 mt-3 font-semibold'>Название:</span>
                     <span className='ps-1'>{item.name}</span>
@@ -52,7 +56,10 @@ const CompetenciesPage = () => {
               </ul>
               <button
                 className='mt-4 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700'
-                onClick={() => console.log('Add button clicked')}
+                onClick={() => {
+                  setNewSkill({ type: E_SKILL_TYPE.SOFT });
+                  setIsOpen(true);
+                }}
               >
                 Добавить
               </button>
@@ -60,7 +67,7 @@ const CompetenciesPage = () => {
             <div className=' col-span-1 rounded bg-white px-4 py-4 shadow-md'>
               <h2 className='mb-4 text-xl font-semibold'>Hard-скиллы</h2>
               <ul className='grid grid-cols-1 divide-y'>
-                {hardSkills.map((item, index) => (
+                {hardSkills?.map((item, index) => (
                   <li key={index} className='mb-4 flex flex-col'>
                     <span className='mb-1 mt-3 font-semibold'>Название:</span>
                     <span className='ps-1'>{item.name}</span>
@@ -74,7 +81,10 @@ const CompetenciesPage = () => {
                 data-modal-toggle='crud-modal'
                 className='block rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
                 type='button'
-                onClick={() => setIsOpen(true)}
+                onClick={() => {
+                  setNewSkill({ type: E_SKILL_TYPE.HARD });
+                  setIsOpen(true);
+                }}
               >
                 Добавить
               </button>
@@ -125,6 +135,7 @@ const CompetenciesPage = () => {
                         Название
                       </label>
                       <input
+                        onChange={handleInput}
                         type='text'
                         name='name'
                         id='name'
@@ -141,6 +152,12 @@ const CompetenciesPage = () => {
                         Описание
                       </label>
                       <textarea
+                        onChange={(event) =>
+                          setNewSkill((prevState) => ({
+                            ...prevState,
+                            description: event.target.value,
+                          }))
+                        }
                         id='description'
                         rows={4}
                         className='block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500'
@@ -150,6 +167,9 @@ const CompetenciesPage = () => {
                     </div>
                   </div>
                   <button
+                    onClick={onAddNewSkill}
+                    // @ts-ignore
+                    disabled={!newSkill?.name || !newSkill?.description}
                     type='submit'
                     className='inline-flex items-center rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
                   >

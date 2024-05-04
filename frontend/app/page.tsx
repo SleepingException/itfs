@@ -13,10 +13,10 @@ export default function Home() {
       <Layout>
         <div className='mx-auto mt-5 max-w-sm rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800'>
           <h5 className='mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white'>
-            Войдите в аккаунт или зареристрируйтесь
+            Войдите в аккаунт или зарегистрируйтесь
           </h5>
           <p className='mb-3 font-normal text-gray-700 dark:text-gray-400'>
-            Для использовния платформы необходимо войти в уже существующий
+            Для использования платформы необходимо войти в уже существующий
             аккаунт или создать новый
           </p>
           <Link

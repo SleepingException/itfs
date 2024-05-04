@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { E_ROLES, IUser } from '@/types/user';
 import axios from 'axios';
+import { IEmployee } from '@/types/employees';
 
 export const useUser = () => {
   const [user, setUser] = useState<IUser | undefined>();
+  const [employee, setEmployee] = useState<IEmployee | undefined>();
   const isAdmin = user?.roles.includes(E_ROLES.ROLE_ADMIN);
   const isEmployee = user?.roles.includes(E_ROLES.ROLE_EMPLOYEE);
   const isManager = user?.roles.includes(E_ROLES.ROLE_MANAGER);
@@ -35,8 +37,7 @@ export const useUser = () => {
       const { data: currentEmployee } = await axios.get(
         'app/employees/current'
       );
-      console.log('currentEmployee', currentEmployee);
-      return currentEmployee;
+      return setEmployee(currentEmployee);
     } catch (e) {
       console.error(e);
     }
@@ -44,12 +45,13 @@ export const useUser = () => {
 
   useEffect(() => {
     getCurrentUser();
+    getCurrentEmployee();
   }, []);
 
   return {
     user,
     refetch: getCurrentUser,
-    currentEmployee: getCurrentEmployee(),
+    currentEmployee: employee,
     isManager,
     isAdmin,
     isEmployee,
