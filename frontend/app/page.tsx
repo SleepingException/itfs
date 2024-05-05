@@ -4,12 +4,50 @@ import { useUser } from '@/utils/hooks/useUser';
 import { Layout } from '@/components/Layout';
 import Link from 'next/link';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { ISkill } from '@/types/skill';
+import { E_LEVEL, ILevels } from '@/types/levels';
 
 export default function Home() {
-  const { user, currentEmployee } = useUser();
+  const { user, currentEmployee, refetchCurrentEmployee } = useUser();
   const [isOpen, setIsOpen] = useState(false);
-  const [newSkill, setNewSkill] = useState({});
+  const [newSkill, setNewSkill] = useState<{
+    skillName?: string;
+    level?: E_LEVEL;
+  }>({});
+  const [skills, setSkills] = useState<ISkill[]>([]);
+  const [levels, setLevel] = useState<ILevels[]>([]);
+  const getSkills = () => {
+    return axios.get('app/skills').then(({ data }) => setSkills(data));
+  };
+
+  const getLevels = () => {
+    return axios.get('app/skills/levels').then(({ data }) => setLevel(data));
+  };
+
+  const onAddNewSkill = async (event: any) => {
+    event.preventDefault();
+    const res = await axios.patch(
+      `app/employees/skills/add?skillName=${newSkill?.skillName}&level=${newSkill?.level}`
+    );
+    console.log('res patch', res);
+    refetchCurrentEmployee().then(() => setIsOpen(false));
+  };
+
+  useEffect(() => {
+    if (!isOpen) return;
+    getSkills();
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (
+      !isOpen ||
+      !currentEmployee?.hardSkills.length ||
+      !currentEmployee?.softSkills.length
+    )
+      return;
+    getLevels();
+  }, [currentEmployee?.hardSkills, currentEmployee?.softSkills, isOpen]);
 
   if (!user) {
     return (
@@ -48,57 +86,91 @@ export default function Home() {
     );
   }
 
-  const onAddSkill = async () => {
-    const res = await axios.patch(
-      'app/employees/skills/add?skillName=Ответственность&level=A'
-    );
-    console.log('res patch', res);
-  };
-  console.log('newSkill', newSkill);
   return (
     <>
       <Layout>
         <div className='container mx-auto py-4'>
           <div className='grid grid-cols-3 gap-4'>
-            <div className='col-span-1 rounded bg-gray-200 p-4'>
-              <h2 className='mb-2 text-lg font-semibold'>
-                Данные пользователя
-              </h2>
-              <p className='py-3'>
+            <div className='col-span-1 rounded p-5 shadow-lg'>
+              <h2 className='mb-2 text-xl font-bold'>Данные пользователя</h2>
+              <p className='py-3 font-semibold'>
                 Имя:
-                <span className='px-2 font-bold'>
+                <span className='px-2 text-base text-gray-700'>
                   {currentEmployee?.firstName}
                 </span>
               </p>
-              <p className='pb-3'>
+              <p className='pb-3 font-semibold'>
                 Фамилия:
-                <span className='px-2 font-bold'>
+                <span className='px-2 text-base text-gray-700'>
                   {currentEmployee?.secondName}
                 </span>
               </p>
-              <p>
+              <p className='font-semibold'>
                 Номер телефона:
-                <span className='px-2 font-bold'>{currentEmployee?.phone}</span>
+                <span className='px-2 text-base text-gray-700'>
+                  {currentEmployee?.phone}
+                </span>
               </p>
             </div>
-            <div className='col-span-2 rounded bg-gray-200 p-4'>
-              <div className='flex content-center justify-between'>
-                <h2 className='mb-2 text-lg font-semibold'>
-                  Карта компетенций
-                </h2>
-                <button
-                  type='button'
-                  className='mb-4 block rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
-                  onClick={() => setIsOpen(true)}
-                >
-                  Добавить
-                </button>
-              </div>
-              <div className='mb-4 flex flex-col rounded bg-white px-4 py-4 shadow-md'>
-                <span className='mb-1 mt-3 font-semibold'>Название:</span>
-                <span className='ps-1'>123</span>
-                <span className='mb-1 mt-3 font-semibold'>Описание:</span>
-                <span className='ps-1'>23345</span>
+            <div className='col-span-2 rounded p-5 shadow-lg'>
+              <div className='grid-rows-2-2 grid gap-4'>
+                <div className='flex content-center justify-between'>
+                  <h2 className='text-xl font-bold'>Карта компетенций</h2>
+                  <button
+                    type='button'
+                    className='mb-4 block rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
+                    onClick={() => setIsOpen(true)}
+                  >
+                    Добавить
+                  </button>
+                </div>
+
+                <div className='mb-4 flex flex-col rounded rounded p-5 px-4 py-4 shadow-md'>
+                  <div className='col-span-1 rounded px-4 py-4'>
+                    <h2 className='mb-4 text-lg font-semibold'>Soft-скиллы</h2>
+                    <ul className='grid grid-cols-1 divide-y'>
+                      {currentEmployee?.softSkills?.map((item, index) => (
+                        <li key={index} className='mb-4 flex flex-col'>
+                          <span className='mb-1 mt-3 font-semibold'>
+                            Название:
+                          </span>
+                          <span className='ps-1'>{item.name}</span>
+                          <span className='mb-1 mt-3 font-semibold'>
+                            Описание:
+                          </span>
+                          <span className='ps-1'>{item.description}</span>
+                          <span className='mb-1 mt-3 font-semibold'>
+                            Уровень владения:
+                          </span>
+                          <span className='ps-1'>
+                            {
+                              levels?.find(
+                                ({ level }) => level === item.skillLevel
+                              )?.levelName
+                            }
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className='col-span-1 rounded px-4 py-4'>
+                    <h2 className='mb-4 text-lg font-semibold'>Hard-скиллы</h2>
+                    <ul className='grid grid-cols-1 divide-y'>
+                      {currentEmployee?.hardSkills?.map((item, index) => (
+                        <li key={index} className='mb-4 flex flex-col'>
+                          <span className='mb-1 mt-3 font-semibold'>
+                            Название:
+                          </span>
+                          <span className='ps-1'>{item.name}</span>
+                          <span className='mb-1 mt-3 font-semibold'>
+                            Описание:
+                          </span>
+                          <span className='ps-1'>{item.description}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -140,52 +212,59 @@ export default function Home() {
                 <form className='p-4 md:p-5'>
                   <div className='mb-4 grid grid-cols-2 gap-4'>
                     <div className='col-span-2'>
-                      <label
-                        htmlFor='skillName'
-                        className='mb-2 block text-sm font-medium text-gray-900 dark:text-white'
-                      >
-                        Выберите компетенцию
-                      </label>
                       <select
                         id='skillName'
                         className='block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500'
                         onChange={(e) => {
-                          setNewSkill({ skillName: e.target.value });
+                          setNewSkill((prevState) => ({
+                            ...prevState,
+                            skillName: e.target.value as E_LEVEL,
+                          }));
                         }}
                       >
-                        <option value='none' selected>
+                        <option value={'undefined'}>
                           Выберите компетенцию
                         </option>
-                        <option value='US'>United States</option>
-                        <option value='CA'>Canada</option>
-                        <option value='FR'>France</option>
-                        <option value='DE'>Germany</option>
+                        {skills?.map(({ name }) => (
+                          <option key={name} value={name}>
+                            {name}
+                          </option>
+                        ))}
                       </select>
                     </div>
-                    {newSkill?.skillName && (
-                      <div className='col-span-2'>
-                        <label
-                          htmlFor='skillName'
-                          className='mb-2 block text-sm font-medium text-gray-900 dark:text-white'
-                        >
-                          Выберите уровень владения данным навыком
-                        </label>
-                        <select
-                          id='skillName'
-                          className='block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500'
-                        >
-                          <option selected>Выберите компетенцию</option>
-                          <option value='US'>United States</option>
-                          <option value='CA'>Canada</option>
-                          <option value='FR'>France</option>
-                          <option value='DE'>Germany</option>
-                        </select>
-                      </div>
-                    )}
+                    {newSkill?.skillName &&
+                      newSkill.skillName !== 'undefined' && (
+                        <div className='col-span-2'>
+                          <select
+                            id='skillName'
+                            className='block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500'
+                            onChange={(e) => {
+                              setNewSkill((prevState) => ({
+                                ...prevState,
+                                level: e.target.value as E_LEVEL,
+                              }));
+                            }}
+                          >
+                            <option value={'undefined'}>
+                              Выберите уровень владения данным навыком
+                            </option>
+                            {levels?.map(({ id, level, levelName }) => (
+                              <option key={id} value={level}>
+                                {levelName}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
                   </div>
                   <button
-                    // onClick={onAddNewSkill}
-                    disabled={!newSkill?.skillName || !newSkill?.level}
+                    onClick={onAddNewSkill}
+                    disabled={
+                      !newSkill?.skillName ||
+                      !newSkill?.level ||
+                      newSkill?.skillName === 'undefined' ||
+                      newSkill?.level === ('undefined' as E_LEVEL)
+                    }
                     type='submit'
                     className='inline-flex items-center rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:bg-gray-400 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
                   >

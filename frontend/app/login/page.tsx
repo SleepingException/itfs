@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { getFormData } from '@/utils/helpers/get-form-data';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const Page = () => {
   const [formState, setFormState] = useState({ username: '', password: '' });
@@ -25,16 +26,13 @@ const Page = () => {
 
     const formData = getFormData(formState);
 
-    const response = await fetch(`/app/login`, {
-      method: 'POST',
-      body: formData,
-    });
-    console.log('response', response);
-    if (response.ok && response.status === 200) {
-      return push('/');
-    }
+    const response = await axios.post(`/app/login`, formData);
 
-    return toast.error('Неправильные данные пользователя');
+    if (response.status === 200 && typeof response.data !== 'string') {
+      return push('/');
+    } else {
+      return toast.error('Неправильные данные пользователя');
+    }
   }
 
   return (

@@ -98,7 +98,7 @@ export const Header = () => {
             id='mobile-menu-2'
           >
             <ul className='mt-4 flex flex-col font-medium lg:mt-0 lg:flex-row lg:space-x-8'>
-              {user ? (
+              {user && (
                 <>
                   <li>
                     <Link
@@ -144,16 +144,6 @@ export const Header = () => {
                   {/*  </a>*/}
                   {/*</li>*/}
                 </>
-              ) : (
-                <li>
-                  <Link
-                    href='/'
-                    className='block rounded bg-primary-700 py-2 pl-3 pr-4 text-white dark:text-white lg:bg-transparent lg:p-0 lg:text-primary-700'
-                    aria-current='page'
-                  >
-                    Профиль сотрудника
-                  </Link>
-                </li>
               )}
               {isAdmin && (
                 <li>

@@ -8,6 +8,6 @@ export interface IEmployee {
   position: string;
   salary: string;
   phone: string;
-  hardSkills: IEmployeeSkill;
-  softSkills: IEmployeeSkill;
+  hardSkills: IEmployeeSkill[];
+  softSkills: IEmployeeSkill[];
 }

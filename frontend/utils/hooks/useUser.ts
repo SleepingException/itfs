@@ -15,7 +15,6 @@ export const useUser = () => {
       axios
         .get(`app/users/current`)
         .then(({ data, status }) => {
-          console.log('userData', data);
           if (typeof data === 'object' && status === 200) {
             return setUser(data);
           }
@@ -51,6 +50,7 @@ export const useUser = () => {
   return {
     user,
     refetch: getCurrentUser,
+    refetchCurrentEmployee: getCurrentEmployee,
     currentEmployee: employee,
     isManager,
     isAdmin,
