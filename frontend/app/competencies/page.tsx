@@ -64,7 +64,7 @@ const CompetenciesPage = () => {
                 Добавить
               </button>
             </div>
-            <div className=' col-span-1 rounded bg-white px-4 py-4 shadow-md'>
+            <div className='col-span-1 rounded bg-white px-4 py-4 shadow-md'>
               <h2 className='mb-4 text-xl font-semibold'>Hard-скиллы</h2>
               <ul className='grid grid-cols-1 divide-y'>
                 {hardSkills?.map((item, index) => (
