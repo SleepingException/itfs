@@ -42,8 +42,8 @@ export default function Home() {
   useEffect(() => {
     if (
       !isOpen ||
-      !currentEmployee?.hardSkills.length ||
-      !currentEmployee?.softSkills.length
+      !currentEmployee?.hardSkills?.length ||
+      !currentEmployee?.softSkills?.length
     )
       return;
     getLevels();
