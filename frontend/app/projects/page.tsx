@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { ChangeEvent, useEffect, useState } from 'react';
 import axios from 'axios';
 import { IProject } from '@/types/project';
+import dayjs from 'dayjs';
 
 const ProjectsPage = () => {
   const { isManager, isAdmin } = useUser();
@@ -34,10 +35,15 @@ const ProjectsPage = () => {
 
   const onAddNewProject = (event: any) => {
     event.preventDefault();
-    axios.post(`app/projects/create`, newProject).then(() => {
-      getProjects();
-      setIsOpen(false);
-    });
+    axios
+      .post(`app/projects/create`, {
+        ...newProject,
+        deadline: dayjs(newProject?.deadline).format('DD-MM-YYYY'),
+      })
+      .then(() => {
+        getProjects();
+        setIsOpen(false);
+      });
   };
 
   useEffect(() => {
@@ -107,7 +113,7 @@ const ProjectsPage = () => {
                 {projects?.map(({ id, name, description, deadline }) => (
                   <tr
                     key={id}
-                    onClick={() => push(`/projects/${id}`)}
+                    onClick={() => push(`projects/${id}`)}
                     className='bg-white dark:bg-gray-800'
                   >
                     <th

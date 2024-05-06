@@ -1,37 +1,54 @@
 'use client';
 
-import { useUser } from '@/utils/hooks/useUser';
 import { Layout } from '@/components/Layout';
-import Link from 'next/link';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { ISkill } from '@/types/skill';
 import { E_LEVEL, ILevels } from '@/types/levels';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { ISkill } from '@/types/skill';
 
-export default function Home() {
-  const { user, currentEmployee, refetchCurrentEmployee } = useUser();
+const ProjectPageId = ({ params }: { params: { id: string } }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [levels, setLevels] = useState<ILevels[]>([]);
+  const [skills, setSkills] = useState<ISkill[]>([]);
+  const [projects, setProjects] = useState([]);
   const [newSkill, setNewSkill] = useState<{
     skillName?: string;
     level?: E_LEVEL;
   }>({});
-  const [skills, setSkills] = useState<ISkill[]>([]);
-  const [levels, setLevels] = useState<ILevels[]>([]);
-  const getSkills = () => {
-    return axios.get('app/skills').then(({ data }) => setSkills(data));
+  const [startFormationData, setStartFormationData] = useState<{
+    withBusyEmployees: boolean;
+    teamSize: number;
+  }>({ withBusyEmployees: false, teamSize: 0 });
+
+  console.log('startFormationData', startFormationData);
+
+  const currentProject = projects?.find(({ id }) => id === Number(params.id));
+
+  console.log('currentProject', currentProject);
+
+  const getProjects = () => {
+    axios.get('app/projects').then(({ data }) => setProjects(data));
   };
 
   const getLevels = () => {
-    return axios.get('app/skills/levels').then(({ data }) => setLevels(data));
+    return axios
+      .get('http://localhost:8080/app/skills/levels')
+      .then(({ data }: { data: ILevels[] }) => setLevels(data));
   };
 
-  const onAddNewSkill = async (event: any) => {
+  const getSkills = () => {
+    return axios
+      .get('http://localhost:8080/app/skills')
+      .then(({ data }: { data: ISkill[] }) => setSkills(data));
+  };
+
+  const onAddNewSkill = (event: any) => {
     event.preventDefault();
-    const res = await axios.patch(
-      `app/employees/skills/add?skillName=${newSkill?.skillName}&level=${newSkill?.level}`
-    );
-    console.log('res patch', res);
-    refetchCurrentEmployee().then(() => setIsOpen(false));
+    axios
+      .patch(
+        `http://localhost:8080/app/projects/${params.id}/skills?skillName=${newSkill?.skillName}&level=${newSkill?.level}`
+      )
+      .then(() => getProjects());
   };
 
   useEffect(() => {
@@ -41,133 +58,121 @@ export default function Home() {
 
   useEffect(() => {
     getLevels();
+    getProjects();
   }, []);
-
-  if (!user) {
-    return (
-      <Layout>
-        <div className='mx-auto mt-5 max-w-sm rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800'>
-          <h5 className='mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white'>
-            Войдите в аккаунт или зарегистрируйтесь
-          </h5>
-          <p className='mb-3 font-normal text-gray-700 dark:text-gray-400'>
-            Для использования платформы необходимо войти в уже существующий
-            аккаунт или создать новый
-          </p>
-          <Link
-            href='/login'
-            className='inline-flex items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
-          >
-            Войти
-            <svg
-              className='ms-2 h-3.5 w-3.5 rtl:rotate-180'
-              aria-hidden='true'
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 14 10'
-            >
-              <path
-                stroke='currentColor'
-                stroke-linecap='round'
-                stroke-linejoin='round'
-                stroke-width='2'
-                d='M1 5h12m0 0L9 1m4 4L9 9'
-              />
-            </svg>
-          </Link>
-        </div>
-      </Layout>
-    );
-  }
 
   return (
     <>
       <Layout>
-        <div className='container mx-auto py-4'>
-          <div className='grid grid-cols-3 gap-4'>
-            <div className='col-span-1 rounded p-5 shadow-lg'>
-              <h2 className='mb-2 text-xl font-bold'>Данные пользователя</h2>
-              <p className='py-3 font-semibold'>
-                Имя:
-                <span className='px-2 text-base text-gray-700'>
-                  {currentEmployee?.firstName}
-                </span>
-              </p>
-              <p className='pb-3 font-semibold'>
-                Фамилия:
-                <span className='px-2 text-base text-gray-700'>
-                  {currentEmployee?.secondName}
-                </span>
-              </p>
-              <p className='font-semibold'>
-                Номер телефона:
-                <span className='px-2 text-base text-gray-700'>
-                  {currentEmployee?.phone}
-                </span>
-              </p>
+        <div className='mt-5 rounded bg-white p-5 shadow-lg'>
+          <h2 className='mt-4 text-4xl font-extrabold dark:text-white'>
+            Проект: {currentProject?.name}
+          </h2>
+          <p className='mt-4 text-lg text-gray-500'>
+            Описание: {currentProject?.description}
+          </p>
+          <p className='mt-4 text-lg text-gray-500'>
+            Дедлайн: {currentProject?.deadline}
+          </p>
+          <hr className='my-8 h-0.5 border-t-0 bg-neutral-100 dark:bg-white/10' />
+          <div className='text-lg font-semibold'>Необходиые навыки</div>
+          <div className='mt-4 flex flex-wrap'>
+            {currentProject?.hardSkills?.map(({ name }) => (
+              <span
+                key={name}
+                className='me-2 rounded border border-yellow-300 bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-gray-700 dark:text-yellow-300'
+              >
+                {name}
+              </span>
+            ))}
+            {currentProject?.softSkills?.map(({ name }) => (
+              <span
+                key={name}
+                className='me-2 rounded border border-blue-400 bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-gray-700 dark:text-blue-400'
+              >
+                {name}
+              </span>
+            ))}
+            <button
+              className='rounded-full bg-white p-1'
+              onClick={() => setIsOpen(true)}
+            >
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 24 24'
+                stroke-width='1.5'
+                stroke='currentColor'
+                className='h-4 w-6'
+              >
+                <path
+                  stroke-linecap='round'
+                  stroke-linejoin='round'
+                  d='M12 4.5v15m7.5-7.5h-15'
+                />
+              </svg>
+            </button>
+          </div>
+          <hr className='my-8 h-0.5 border-t-0 bg-neutral-100 dark:bg-white/10' />
+          <div className='mb-4 text-lg font-semibold'>
+            Начать формирование команды
+          </div>
+          <div className='flex items-center'>
+            <div className='flex-col'>
+              <label
+                htmlFor='name'
+                className='mb-2 block text-sm font-medium text-gray-900 dark:text-white'
+              >
+                Укажите размер команды
+              </label>
+              <input
+                placeholder='Укажите размер команды'
+                maxLength={2}
+                value={startFormationData.teamSize}
+                onChange={(event) => {
+                  if (!event.target.value) {
+                    return setStartFormationData((prevState) => ({
+                      ...prevState,
+                      teamSize: 0,
+                    }));
+                  }
+                  if (!Number(event.target.value)) return;
+                  setStartFormationData((prevState) => ({
+                    ...prevState,
+                    teamSize: Number(event.target.value),
+                  }));
+                }}
+                className='dark:focus:border-blue-500" block  w-full  rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:ring-blue-500'
+              />
             </div>
-            <div className='col-span-2 rounded p-5 shadow-lg'>
-              <div className='grid-rows-2-2 grid gap-4'>
-                <div className='flex content-center justify-between'>
-                  <h2 className='text-xl font-bold'>Карта компетенций</h2>
-                  <button
-                    type='button'
-                    className='mb-4 block rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
-                    onClick={() => setIsOpen(true)}
-                  >
-                    Добавить
-                  </button>
-                </div>
-
-                <div className='mb-4 flex flex-col rounded rounded p-5 px-4 py-4 shadow-md'>
-                  <div className='col-span-1 rounded px-4 py-4'>
-                    <h2 className='mb-4 text-lg font-semibold'>Soft-скиллы</h2>
-                    <ul className='grid grid-cols-1 divide-y'>
-                      {currentEmployee?.softSkills?.map((item, index) => (
-                        <li key={index} className='mb-4 flex flex-col'>
-                          <span className='mb-1 mt-3 font-semibold'>
-                            Название:
-                          </span>
-                          <span className='ps-1'>{item.name}</span>
-                          <span className='mb-1 mt-3 font-semibold'>
-                            Описание:
-                          </span>
-                          <span className='ps-1'>{item.description}</span>
-                          <span className='mb-1 mt-3 font-semibold'>
-                            Уровень владения:
-                          </span>
-                          <span className='ps-1'>
-                            {
-                              levels?.find(
-                                ({ level }) => level === item.skillLevel
-                              )?.levelName
-                            }
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className='col-span-1 rounded px-4 py-4'>
-                    <h2 className='mb-4 text-lg font-semibold'>Hard-скиллы</h2>
-                    <ul className='grid grid-cols-1 divide-y'>
-                      {currentEmployee?.hardSkills?.map((item, index) => (
-                        <li key={index} className='mb-4 flex flex-col'>
-                          <span className='mb-1 mt-3 font-semibold'>
-                            Название:
-                          </span>
-                          <span className='ps-1'>{item.name}</span>
-                          <span className='mb-1 mt-3 font-semibold'>
-                            Описание:
-                          </span>
-                          <span className='ps-1'>{item.description}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
+            <div className='ml-10 flex items-center'>
+              <input
+                id='withBusyEmployees'
+                name='withBusyEmployees'
+                type='checkbox'
+                value=''
+                onClick={() =>
+                  setStartFormationData((prevState) => ({
+                    ...prevState,
+                    withBusyEmployees: !prevState.withBusyEmployees,
+                  }))
+                }
+                className='h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600'
+              />
+              <label
+                htmlFor='withBusyEmployees'
+                className='ms-2 text-sm font-medium text-gray-900 dark:text-gray-300'
+              >
+                Учитывать занятых сотрудников
+              </label>
             </div>
           </div>
+          <button
+            className='mt-4 block rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
+            type='button'
+          >
+            Сформировать
+          </button>
         </div>
       </Layout>
       {isOpen && (
@@ -285,4 +290,6 @@ export default function Home() {
       )}
     </>
   );
-}
+};
+
+export default ProjectPageId;
