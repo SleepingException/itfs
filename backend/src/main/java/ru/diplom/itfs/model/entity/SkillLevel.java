@@ -9,7 +9,9 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import ru.diplom.itfs.model.enums.SkillLevelEnum;
 
@@ -18,6 +20,8 @@ import ru.diplom.itfs.model.enums.SkillLevelEnum;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@ToString
+@EqualsAndHashCode(of = "id")
 @Accessors(chain = true)
 public class SkillLevel {
 

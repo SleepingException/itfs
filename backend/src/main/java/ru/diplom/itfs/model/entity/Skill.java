@@ -14,11 +14,13 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import ru.diplom.itfs.model.enums.SkillType;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -26,6 +28,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@ToString
+@EqualsAndHashCode(of = "id")
 public class Skill {
 
     @Id
@@ -57,5 +61,9 @@ public class Skill {
             employees = new HashSet<>();
         }
         employees.add(employee);
+    }
+
+    public Boolean isTheSameSkill(Skill s) {
+        return Objects.equals(this.name, s.name);
     }
 }

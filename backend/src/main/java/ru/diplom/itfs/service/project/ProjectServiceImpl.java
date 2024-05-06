@@ -80,6 +80,11 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new BadRequest(String.format("Отсутствует проект с id = %s", id)));
 
+        project.getRequiredSkills().stream()
+                .filter(item -> item.isTheSameSkill(skill))
+                .findAny()
+                .ifPresent(value -> project.getRequiredSkills().remove(value));
+
         project.addSkill(skill);
         projectRepository.save(project);
 
@@ -164,7 +169,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .toList();
     }
 
-    private Double getSkillSimilarity(List<Double> projectVector, List<Double> employeeVector) {
+    public Double getSkillSimilarity(List<Double> projectVector, List<Double> employeeVector) {
         Double projectVectorLen = Math.sqrt(projectVector.stream()
                 .map(num -> Math.pow(num, 2))
                 .mapToDouble(Double::doubleValue)
@@ -188,7 +193,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         if (projectVectorLen == 0d || employeeVectorLen == 0d) {
-            return -1d * Double.POSITIVE_INFINITY;
+            return Double.POSITIVE_INFINITY;
         }
 
         return (scalar / (projectVectorLen * employeeVectorLen)) * Math.sqrt(squareDist);

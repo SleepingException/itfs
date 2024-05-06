@@ -9,16 +9,19 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.springframework.security.core.GrantedAuthority;
-import ru.diplom.itfs.model.enums.UserRoleEnum;
 
 @Entity
 @Table(name = "authorities")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@ToString
+@EqualsAndHashCode(of = "id")
 @Accessors(chain = true)
 public class BasicAuthority implements GrantedAuthority {
 

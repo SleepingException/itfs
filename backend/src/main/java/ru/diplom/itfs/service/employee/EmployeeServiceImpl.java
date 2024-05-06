@@ -15,8 +15,6 @@ import ru.diplom.itfs.repository.EmployeeRepository;
 import ru.diplom.itfs.repository.SkillLevelRepository;
 import ru.diplom.itfs.repository.SkillRepository;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
@@ -34,6 +32,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeDto update(EmployeeUpdateDto dto, Employee employee) {
         employeeMapper.update(dto, employee);
+        employeeRepository.save(employee);
         return employeeMapper.toDto(employee);
     }
 
@@ -43,6 +42,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         SkillLevel skillLevel = skillLevelRepository.getSkillLevelByLevel(level);
         Skill skill = skillRepository.getSkillByNameAndLevel(skillName, skillLevel)
                 .orElseThrow(() -> new BadRequest(String.format("Не найдена компетенция %s", skillName)));
+
+        employee.getSkills().stream()
+                .filter(item -> item.isTheSameSkill(skill))
+                .findAny()
+                .ifPresent(value -> employee.getSkills().remove(value));
 
         employee.addSkill(skill);
         employeeRepository.save(employee);

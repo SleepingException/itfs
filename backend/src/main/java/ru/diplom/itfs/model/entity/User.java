@@ -15,15 +15,14 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.diplom.itfs.model.enums.UserRoleEnum;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -32,6 +31,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@ToString
+@EqualsAndHashCode(of = "id")
 @Accessors(chain = true)
 public class User implements UserDetails {
 

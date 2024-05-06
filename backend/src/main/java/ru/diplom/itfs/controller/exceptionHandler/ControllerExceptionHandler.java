@@ -23,7 +23,7 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleAnyExceptions(Exception e) {
-        log.error(e.getMessage());
+        log.error(e.fillInStackTrace().toString());
         return ResponseEntity.internalServerError()
                 .body(Map.of("message", e.getMessage()));
     }
