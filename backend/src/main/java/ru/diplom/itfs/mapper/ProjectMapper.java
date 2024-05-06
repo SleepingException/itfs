@@ -13,7 +13,9 @@ import ru.diplom.itfs.dto.skill.ProjectSkillDto;
 import ru.diplom.itfs.model.entity.Project;
 import ru.diplom.itfs.model.enums.SkillType;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Mapper(componentModel = "spring", uses = {EmployeeMapper.class, SkillMapper.class})
 public abstract class ProjectMapper {
@@ -25,12 +27,16 @@ public abstract class ProjectMapper {
 
     @AfterMapping
     protected void afterToDto(Project project, @MappingTarget ProjectDto dto) {
-        List<ProjectSkillDto> hardSkills = project.getRequiredSkills().stream()
+        List<ProjectSkillDto> hardSkills = Optional.ofNullable(project.getRequiredSkills())
+                .orElse(Collections.emptySet())
+                .stream()
                 .filter(skill -> SkillType.HARD.equals(skill.getType()))
                 .map(skillMapper::toProjectSkill)
                 .toList();
 
-        List<ProjectSkillDto> softSkills = project.getRequiredSkills().stream()
+        List<ProjectSkillDto> softSkills = Optional.ofNullable(project.getRequiredSkills())
+                .orElse(Collections.emptySet())
+                .stream()
                 .filter(skill -> SkillType.SOFT.equals(skill.getType()))
                 .map(skillMapper::toProjectSkill)
                 .toList();

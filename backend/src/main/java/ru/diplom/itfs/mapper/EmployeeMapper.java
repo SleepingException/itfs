@@ -9,12 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.diplom.itfs.dto.employee.EmployeeDto;
 import ru.diplom.itfs.dto.employee.EmployeeUpdateDto;
 import ru.diplom.itfs.dto.skill.EmployeeSkillDto;
-import ru.diplom.itfs.dto.skill.SkillDto;
 import ru.diplom.itfs.model.entity.Employee;
-import ru.diplom.itfs.model.entity.Skill;
 import ru.diplom.itfs.model.enums.SkillType;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Mapper(componentModel = "spring", uses = {SkillMapper.class}, imports = {SkillMapper.class})
 public abstract class EmployeeMapper {
@@ -36,12 +36,16 @@ public abstract class EmployeeMapper {
 
     @AfterMapping
     protected void afterToDto(Employee employee, @MappingTarget EmployeeDto dto) {
-        List<EmployeeSkillDto> hardSkills = employee.getSkills().stream()
+        List<EmployeeSkillDto> hardSkills = Optional.ofNullable(employee.getSkills())
+                .orElse(Collections.emptySet())
+                .stream()
                 .filter(skill -> SkillType.HARD.equals(skill.getType()))
                 .map(skillMapper::toEmployeeSkill)
                 .toList();
 
-        List<EmployeeSkillDto> softSkills = employee.getSkills().stream()
+        List<EmployeeSkillDto> softSkills = Optional.ofNullable(employee.getSkills())
+                .orElse(Collections.emptySet())
+                .stream()
                 .filter(skill -> SkillType.SOFT.equals(skill.getType()))
                 .map(skillMapper::toEmployeeSkill)
                 .toList();
