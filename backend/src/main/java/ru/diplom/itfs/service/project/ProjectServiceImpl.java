@@ -24,6 +24,7 @@ import ru.diplom.itfs.repository.SkillLevelRepository;
 import ru.diplom.itfs.repository.SkillRepository;
 import ru.diplom.itfs.service.employee.EmployeeService;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -48,7 +49,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public ProjectDto create(User user, ProjectCreateDto dto) {
         Project project = projectMapper.toEntity(dto);
-        project.setAuthor(user.getEmployee());
+        project.setAuthor(employeeRepository.getReferenceById(user.getEmployee().getId()));
 
         projectRepository.save(project);
 
@@ -68,6 +69,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Transactional
     public ProjectDto addSkill(Long id, String skillName, SkillLevelEnum levelEnum) {
         SkillLevel skillLevel = skillLevelRepository.getSkillLevelByLevel(levelEnum);
         Skill skill = skillRepository.getSkillByNameAndLevel(skillName, skillLevel)
@@ -146,13 +148,18 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<ProjectDto> getList(User user) {
-        Set<Project> userProjects = user.getEmployee().getProjects();
+        List<Project> userProjects = new ArrayList<>();
+
+        if (user.getEmployee() != null) {
+            userProjects = new ArrayList<>(user.getEmployee().getProjects());
+        }
 
         if (user.hasRole(UserRoleEnum.ROLE_MANAGER) || user.hasRole(UserRoleEnum.ROLE_ADMIN)) {
             userProjects.addAll(projectRepository.findAllByAuthorId(user.getEmployee().getId()));
         }
 
-        return user.getEmployee().getProjects().stream()
+
+        return userProjects.stream()
                 .map(projectMapper::toDto)
                 .toList();
     }

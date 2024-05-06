@@ -36,7 +36,7 @@ public class ProjectController {
     private final ProjectService projectService;
 
     @PostMapping("/create")
-    public ProjectDto create(@AuthenticationPrincipal User user, ProjectCreateDto createDto) {
+    public ProjectDto create(@AuthenticationPrincipal User user, @RequestBody ProjectCreateDto createDto) {
         return projectService.create(user, createDto);
     }
 

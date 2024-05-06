@@ -62,6 +62,7 @@ public class Project {
     )
     private Set<Employee> team;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Employee author;
 

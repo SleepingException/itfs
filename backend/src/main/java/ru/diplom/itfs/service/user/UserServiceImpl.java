@@ -56,6 +56,7 @@ public class UserServiceImpl implements UserService {
         employee.setUser(user);
 
         userRepository.save(user);
+        employeeRepository.save(employee);
     }
 
     @Override
