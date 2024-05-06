@@ -66,7 +66,7 @@ public class ProjectController {
         return projectService.saveTeam(id, employees);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER, ROLE_EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_EMPLOYEE')")
     @GetMapping
     public List<ProjectDto> list(@AuthenticationPrincipal User user) {
         return projectService.getList(user);
