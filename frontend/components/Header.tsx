@@ -13,7 +13,7 @@ export const Header = () => {
   async function onLogut(event: any) {
     event.preventDefault();
 
-    const response = await fetch(`/app/logout`, {
+    const response = await fetch(`http://localhost:8080/app/logout`, {
       method: 'GET',
     });
 

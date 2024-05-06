@@ -13,7 +13,7 @@ export const useUser = () => {
   const getCurrentUser = () => {
     try {
       axios
-        .get(`app/users/current`)
+        .get(`http://localhost:8080/app/users/current`)
         .then(({ data, status }) => {
           if (typeof data === 'object' && status === 200) {
             return setUser(data);
@@ -34,7 +34,7 @@ export const useUser = () => {
   const getCurrentEmployee = async () => {
     try {
       const { data: currentEmployee } = await axios.get(
-        'app/employees/current'
+        'http://localhost:8080/app/employees/current'
       );
       return setEmployee(currentEmployee);
     } catch (e) {

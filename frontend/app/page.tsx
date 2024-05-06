@@ -160,6 +160,13 @@ export default function Home() {
                             Описание:
                           </span>
                           <span className='ps-1'>{item.description}</span>
+                          <span className='ps-1'>
+                            {
+                              levels?.find(
+                                ({ level }) => level === item.skillLevel
+                              )?.levelName
+                            }
+                          </span>
                         </li>
                       ))}
                     </ul>

@@ -27,7 +27,9 @@ const ProjectPageId = ({ params }: { params: { id: string } }) => {
   console.log('currentProject', currentProject);
 
   const getProjects = () => {
-    axios.get('app/projects').then(({ data }) => setProjects(data));
+    axios
+      .get('http://localhost:8080/app/projects')
+      .then(({ data }) => setProjects(data));
   };
 
   const getLevels = () => {
@@ -48,7 +50,18 @@ const ProjectPageId = ({ params }: { params: { id: string } }) => {
       .patch(
         `http://localhost:8080/app/projects/${params.id}/skills?skillName=${newSkill?.skillName}&level=${newSkill?.level}`
       )
-      .then(() => getProjects());
+      .then(() => {
+        getProjects();
+        setIsOpen(false);
+      });
+  };
+
+  const onStartFormation = (event: any) => {
+    event.preventDefault();
+    axios.post(
+      `http://localhost:8080/app/projects/${params.id}/team/start-formation`,
+      startFormationData
+    );
   };
 
   useEffect(() => {
@@ -168,8 +181,10 @@ const ProjectPageId = ({ params }: { params: { id: string } }) => {
             </div>
           </div>
           <button
-            className='mt-4 block rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
+            className='mt-4 block rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:bg-gray-400 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
             type='button'
+            onClick={onStartFormation}
+            disabled={!startFormationData?.teamSize}
           >
             Сформировать
           </button>
