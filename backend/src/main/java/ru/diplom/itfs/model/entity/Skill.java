@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
@@ -32,7 +31,7 @@ public class Skill {
     @Id
     @Column(name = "skill_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "skill_id_seq_gen")
-    @SequenceGenerator(name = "skill_id_seq_gen", sequenceName = "skill_id_seq")
+    @SequenceGenerator(name = "skill_id_seq_gen", sequenceName = "skill_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "name")

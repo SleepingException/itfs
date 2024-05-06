@@ -32,7 +32,7 @@ public class Project {
     @Id
     @Column(name = "project_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "project_id_seq_gen")
-    @SequenceGenerator(name = "project_id_seq_gen", sequenceName = "project_id_seq")
+    @SequenceGenerator(name = "project_id_seq_gen", sequenceName = "project_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "name")
