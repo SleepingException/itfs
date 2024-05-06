@@ -40,14 +40,8 @@ export default function Home() {
   }, [isOpen]);
 
   useEffect(() => {
-    if (
-      !isOpen ||
-      !currentEmployee?.hardSkills?.length ||
-      !currentEmployee?.softSkills?.length
-    )
-      return;
     getLevels();
-  }, [currentEmployee?.hardSkills, currentEmployee?.softSkills, isOpen]);
+  }, []);
 
   if (!user) {
     return (

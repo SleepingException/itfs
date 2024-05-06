@@ -28,11 +28,16 @@ const Page = () => {
 
     const response = await axios.post(`/app/login`, formData);
 
-    if (response.status === 200 && typeof response.data !== 'string') {
-      return push('/');
-    } else {
-      return toast.error('Неправильные данные пользователя');
+    if (response.status === 200) {
+      if (typeof response.data === 'object') {
+        return push('/');
+      }
+      if (!response.data) {
+        return push('/admin');
+      }
     }
+
+    return toast.error('Неправильные данные пользователя');
   }
 
   return (
