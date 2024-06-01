@@ -23,7 +23,7 @@ import ru.diplom.itfs.model.enums.SkillLevelEnum;
 @ToString
 @EqualsAndHashCode(of = "id")
 @Accessors(chain = true)
-public class SkillLevel {
+public class SkillLevel implements BasicEntity {
 
     @Id
     @Column(name = "skill_level_id")

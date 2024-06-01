@@ -34,6 +34,10 @@ public class BasicAuthority implements GrantedAuthority {
     @Column(name = "role", unique = true, nullable = false)
     private String role;
 
+    public BasicAuthority(String role) {
+        this.role = role;
+    }
+
     @Override
     public String getAuthority() {
         return role;

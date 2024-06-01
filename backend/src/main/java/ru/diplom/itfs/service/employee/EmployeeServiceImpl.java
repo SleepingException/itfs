@@ -26,31 +26,39 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeDto getDto(Employee employee) {
-        return employeeMapper.toDto(employee);
+        Employee employeeEntity = employeeRepository.findById(employee.getId())
+                .orElseThrow(() -> new BadRequest(String.format("Отсутствует сотрудник с id = %s", employee.getId())));
+        return employeeMapper.toDto(employeeEntity);
     }
 
     @Override
     public EmployeeDto update(EmployeeUpdateDto dto, Employee employee) {
-        employeeMapper.update(dto, employee);
-        employeeRepository.save(employee);
-        return employeeMapper.toDto(employee);
+        Employee employeeEntity = employeeRepository.findById(employee.getId())
+                .orElseThrow(() -> new BadRequest(String.format("Отсутствует сотрудник с id = %s", employee.getId())));
+
+        employeeMapper.update(dto, employeeEntity);
+        employeeRepository.save(employeeEntity);
+        return employeeMapper.toDto(employeeEntity);
     }
 
     @Override
     @Transactional
     public EmployeeDto addSkill(Employee employee, String skillName, SkillLevelEnum level) {
+        Employee employeeEntity = employeeRepository.findById(employee.getId())
+                .orElseThrow(() -> new BadRequest(String.format("Отсутствует сотрудник с id = %s", employee.getId())));
+
         SkillLevel skillLevel = skillLevelRepository.getSkillLevelByLevel(level);
         Skill skill = skillRepository.getSkillByNameAndLevel(skillName, skillLevel)
                 .orElseThrow(() -> new BadRequest(String.format("Не найдена компетенция %s", skillName)));
 
-        employee.getSkills().stream()
+        employeeEntity.getSkills().stream()
                 .filter(item -> item.isTheSameSkill(skill))
                 .findAny()
                 .ifPresent(value -> employee.getSkills().remove(value));
 
-        employee.addSkill(skill);
-        employeeRepository.save(employee);
+        employeeEntity.addSkill(skill);
+        employeeRepository.save(employeeEntity);
 
-        return employeeMapper.toDto(employee);
+        return employeeMapper.toDto(employeeEntity);
     }
 }

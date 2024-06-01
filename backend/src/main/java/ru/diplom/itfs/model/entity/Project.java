@@ -30,7 +30,7 @@ import java.util.Set;
 @Data
 @ToString
 @EqualsAndHashCode(of = "id")
-public class Project {
+public class Project implements BasicEntity {
 
     @Id
     @Column(name = "project_id")
@@ -48,7 +48,7 @@ public class Project {
     private LocalDate deadline;
 
     @ToString.Exclude
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "project_skills_link",
             joinColumns = @JoinColumn(name = "project_id"),
@@ -57,7 +57,7 @@ public class Project {
     private Set<Skill> requiredSkills;
 
     @ToString.Exclude
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "project_employees_link",
             joinColumns = @JoinColumn(name = "project_id"),
@@ -66,7 +66,7 @@ public class Project {
     private Set<Employee> team;
 
     @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Employee author;
 
     public void addSkill(Skill skill) {

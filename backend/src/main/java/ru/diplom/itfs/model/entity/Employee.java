@@ -31,7 +31,7 @@ import java.util.Set;
 @ToString
 @EqualsAndHashCode(of = "id")
 @Accessors(chain = true)
-public class Employee {
+public class Employee implements BasicEntity {
 
     @Id
     @Column(name = "employee_id")
@@ -58,7 +58,7 @@ public class Employee {
     private String phone;
 
     @ToString.Exclude
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "user_id")
     private User user;
 

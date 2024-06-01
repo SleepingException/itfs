@@ -34,7 +34,7 @@ import java.util.Set;
 @ToString
 @EqualsAndHashCode(of = "id")
 @Accessors(chain = true)
-public class User implements UserDetails {
+public class User implements UserDetails, BasicEntity {
 
     @Id
     @Column(name = "user_id")
@@ -56,7 +56,7 @@ public class User implements UserDetails {
     private Employee employee;
 
     @ToString.Exclude
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(
             name = "user_authorities_link",
             joinColumns = @JoinColumn(name = "user_id"),

@@ -19,9 +19,11 @@ import ru.diplom.itfs.repository.AuthorityRepository;
 import ru.diplom.itfs.repository.EmployeeRepository;
 import ru.diplom.itfs.repository.UserRepository;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -42,20 +44,19 @@ public class UserServiceImpl implements UserService {
             return;
         }
 
+        Set<BasicAuthority> authorities = Arrays.stream(UserRoleEnum.values())
+                .map(role -> authorityRepository.save(new BasicAuthority(role.name())))
+                .collect(Collectors.toSet());
+
         User user = new User()
                 .setUsername("admin")
                 .setPassword(passwordEncoder.encode("admin"))
                 .setEnabled(true)
-                .setAuthorities(Set.of(
-                        new BasicAuthority().setRole(UserRoleEnum.ROLE_ADMIN.name()),
-                        new BasicAuthority().setRole(UserRoleEnum.ROLE_MANAGER.name()),
-                        new BasicAuthority().setRole(UserRoleEnum.ROLE_EMPLOYEE.name())));
+                .setAuthorities(authorities);
 
         Employee employee = new Employee()
-                .setFirstName("Superuser");
-        employee.setUser(user);
-
-        userRepository.save(user);
+                .setFirstName("Superuser")
+                .setUser(user);
         employeeRepository.save(employee);
     }
 

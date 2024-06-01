@@ -30,7 +30,7 @@ import java.util.Set;
 @Data
 @ToString
 @EqualsAndHashCode(of = "id")
-public class Skill {
+public class Skill implements BasicEntity {
 
     @Id
     @Column(name = "skill_id")
@@ -48,12 +48,12 @@ public class Skill {
     private SkillType type;
 
     @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "skill_level_id")
     private SkillLevel level;
 
     @ToString.Exclude
-    @ManyToMany(mappedBy = "skills", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany(mappedBy = "skills", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Set<Employee> employees;
 
     public void addEmployee(Employee employee) {
